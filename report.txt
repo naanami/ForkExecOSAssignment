@@ -1,0 +1,143 @@
+assignment 0
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+
+int main() {
+    printf("before forks pid %d\n", getpid());
+
+    fork();
+    fork();
+    fork();
+
+    printf("after forks pid %d parent pid %d\n", getpid(), getppid());
+
+    return 0;
+}
+
+calls fork() three times sequentially.
+each fork creates a new child process.
+prints the pid of each process and its parent pid.
+system calls: fork() → returns 0 in child, child pid in parent.
+shows the process hierarchy and how many child processes are created.
+all processes continue execution after each fork.
+
+
+assignment 1
+
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    int pid = fork();
+
+    if (pid == 0) {
+        execl("/usr/bin/ls", "ls", NULL);
+    } else {
+        wait(NULL);
+        printf("parent process done\n");
+    }
+
+    return 0;
+}
+
+creates a child process with fork().
+child runs ls using execl(), replacing its program image.
+parent waits for child to finish using wait(), then prints message.
+system calls: fork(), execl(), wait().
+fork() returns 0 in child, child pid in parent.
+ensures child output appears before parent message.
+
+
+assignment 2
+
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+    int pid1 = fork();
+
+    if (pid1 == 0) {
+        execl("/usr/bin/ls", "ls", NULL);
+    } else {
+        wait(NULL);
+        int pid2 = fork();
+        if (pid2 == 0) {
+            execl("/usr/bin/date", "date", NULL);
+        } else {
+            wait(NULL);
+            printf("parent process done\n");
+        }
+    }
+
+    return 0;
+}
+
+
+creates two child processes.
+first child runs ls, second child runs date.
+parent waits for each child before printing its message.
+system calls: fork(), execl(), wait().
+shows relationship between parent and multiple children.
+flow ensures outputs of children appear before parent.
+
+
+assignment 3
+
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+    int pid = fork();
+
+    if (pid == 0) {
+        execl("/bin/echo", "echo", "hello from the child process", NULL);
+    } else {
+        wait(NULL);
+        printf("parent process done\n");
+    }
+
+    return 0;
+}
+
+creates a child with fork().
+child runs echo with argument using execl().
+parent waits for child to finish before printing.
+system calls: fork(), execl(), wait().
+shows parent-child relationship and flow control.
+
+
+assignment 4
+
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    int pid = fork();
+
+    if (pid == 0) {
+        execl("/bin/grep", "grep", "main", "test.txt", NULL);
+    } else {
+        wait(NULL);
+        printf("parent process completed\n");
+    }
+
+    return 0;
+}
+
+creates a child process using fork().
+child runs grep "main" test.txt using execl().
+parent waits for child, then prints message.
+system calls: fork(), execl(), wait().
+test.txt contains lines with main to test grep.
+demonstrates passing arguments to child process and parent-child relationship.
+
+
+
+
+github repository: https://github.com/naanami/ForkExecOSAssignment
