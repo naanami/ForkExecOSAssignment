@@ -8,6 +8,7 @@ int main() {
     if (pid == 0) {
         execl("/usr/bin/ls", "ls", NULL);
     } else {
+        wait(NULL);
         printf("parent process done\n");
     }
 
